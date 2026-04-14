@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402501574477",
+    "project_id": "ice-fishing-riches",
+    "storage_bucket": "ice-fishing-riches.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402501574477:android:b76781a4a99eafabbd6104",
+        "android_client_info": {
+          "package_name": "beatmaker.edm.musicgames.PianoGa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgMdoeOpZOQ2wPc7xC_zktM0aUpyzu1ok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
