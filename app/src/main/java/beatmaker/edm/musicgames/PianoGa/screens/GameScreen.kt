@@ -14,6 +14,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -161,17 +163,27 @@ fun GameScreen(
         }
     }
 
-    fun togglePause() {
+    fun pauseGame() {
+        if (phase == GamePhase.SWIMMING && !isPaused) {
+            isPaused = true
+            pausedFishProgress = fishProgress.value
+            phase = GamePhase.PAUSED
+            scope.launch { fishProgress.stop() }
+        }
+    }
+
+    fun resumeGame() {
         if (isPaused) {
             isPaused = false
             startFishSwim(fromProgress = pausedFishProgress, isNewRound = false)
+        }
+    }
+
+    fun togglePause() {
+        if (isPaused) {
+            resumeGame()
         } else {
-            if (phase == GamePhase.SWIMMING) {
-                isPaused = true
-                pausedFishProgress = fishProgress.value
-                phase = GamePhase.PAUSED
-                scope.launch { fishProgress.stop() }
-            }
+            pauseGame()
         }
     }
 
@@ -224,7 +236,7 @@ fun GameScreen(
     DisposableEffect(lifecycleOwner) {
         val obs = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_PAUSE && phase != GamePhase.WIN && phase != GamePhase.LOSE && !isExitingScreen)
-                togglePause()
+                pauseGame()
         }
         lifecycleOwner.lifecycle.addObserver(obs)
         onDispose { lifecycleOwner.lifecycle.removeObserver(obs) }
@@ -733,6 +745,7 @@ private fun ResultOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit) { detectTapGestures { /* consume */ } }
             .background(DeepOcean.copy(alpha = 0.85f)),
         contentAlignment = Alignment.Center
     ) {
@@ -817,6 +830,7 @@ private fun PauseOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit) { detectTapGestures { /* consume */ } }
             .background(DeepOcean.copy(alpha = 0.80f)),
         contentAlignment = Alignment.Center
     ) {
