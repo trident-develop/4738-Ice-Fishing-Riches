@@ -48,27 +48,43 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import beatmaker.edm.musicgames.PianoGa.navigation.LoadingGraph
 import beatmaker.edm.musicgames.PianoGa.screens.LoadingScreen
+import beatmaker.edm.musicgames.PianoGa.screens.privacy.Show3
 import beatmaker.edm.musicgames.PianoGa.ui.theme.AquaGlow
 import beatmaker.edm.musicgames.PianoGa.ui.theme.FoamWhite
 import beatmaker.edm.musicgames.PianoGa.ui.theme.GameFontFamily
 import beatmaker.edm.musicgames.PianoGa.ui.theme.GoldFish
 import beatmaker.edm.musicgames.PianoGa.ui.theme.IceFishingRichesTheme
 import kotlinx.coroutines.delay
+import org.koin.android.ext.android.get
 import kotlin.math.cos
 import kotlin.math.sin
 
 class LoadingActivity : ComponentActivity() {
     private var controller: WindowInsetsControllerCompat? = null
+    private lateinit var show3: Show3
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        controller?.hide(WindowInsetsCompat.Type.systemBars())
+        show3 = Show3(this, get(), get())
+        setContent {
+            LoadingGraph(show3)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         controller?.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         controller?.hide(WindowInsetsCompat.Type.systemBars())
-        enableEdgeToEdge()
-        setContent {
-            LoadingGraph()
-        }
+    }
+
+    override fun onDestroy() {
+        show3.destroy()
+        super.onDestroy()
     }
 }

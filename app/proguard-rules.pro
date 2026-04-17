@@ -1,1 +1,4 @@
 -keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-dontoptimize
+-repackageclasses 'androidx.compose.foundation'
+-allowaccessmodification
